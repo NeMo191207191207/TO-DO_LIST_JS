@@ -1,0 +1,58 @@
+.btn_completed, .btn_delete {
+  width: 131px;
+  height: 51px;
+  border: 2px solid;
+  border-radius: 15px;
+  transition: 0.3s ease;
+}
+
+.btn_completed:hover, .btn_completed:focus {
+  border: rgba(0, 129, 0, 0.7);
+  box-shadow: 0 0 10px rgba(3, 255, 16, 0.897);
+}
+
+.btn_delete:hover, .btn_delete:focus {
+  border: rgb(255, 0, 0);
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.774);
+}
+
+.btn_completed, .btn_delete {
+  width: 127px;
+  height: 47px;
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  color: #fff;
+  font-weight: 600;
+}
+
+.btn_completed {
+  border-image: linear-gradient(to bottom right,
+      #026d14 0%,
+      rgba(105, 255, 46, 0) 30%);
+  background-color: #00b81f;
+}
+
+.btn_delete {
+  border-image: linear-gradient(to bottom right,
+      #a30404 0%,
+      rgba(255, 0, 0, 0) 30%);
+  background-color: #c20000;
+}
+
+.btn_completed_active {
+  background-color: #515151ff;
+}
+
+.btn_completed_active:hover{
+  border: rgb(110, 110, 110);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.712);
+}
+
+.user-profile-inner svg {
+  width: 27px;
+  height: 27px;
+  fill: #fff;
+}

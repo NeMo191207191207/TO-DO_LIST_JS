@@ -1,0 +1,102 @@
+ul, li {
+  list-style: none;
+}
+
+button {
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.to-do {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.title {
+  color: #00b3ff;
+  font-size: 40px;
+  font-weight: 700;
+}
+
+.input_to-do {
+  border: none;
+  padding: 1rem;
+  width: 30rem;
+  border-radius: 1rem;
+  background: #e8e8e8;
+  box-shadow: 20px 20px 60px #c5c5c5,
+  -20px -20px 60px #ffffff;
+  transition: 0.3s;
+}
+
+.input_to-do:focus {
+  outline-color: #e8e8e8;
+  background: #e8e8e8;
+  box-shadow: inset 20px 20px 60px #c5c5c5,
+    inset -20px -20px 60px #ffffff;
+  transition: 0.3s;
+}
+
+.create__task {
+  border: none;
+  padding: 10px 30px;
+  margin-left: 10px;
+  background-color: #0091ff;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 500;
+  border-radius: 10px;
+}
+
+.create__task:hover {
+  background-color: rgb(0, 102, 255);
+
+}
+
+.types_task {}
+
+.task {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  width: 500px;
+  padding: 5px 10px;
+  margin-bottom: 20px;
+}
+
+.inputBlock, .inputBlock_vk {
+  position: relative;
+  border: 1.5px solid #0091ff;
+  border-radius: 5px;
+  width: 300px;
+  padding: 10px 5px;
+}
+.inputBlock li, .inputBlock_vk li {
+  overflow-wrap: anywhere;
+}
+
+.inputBlock::before {
+  content: '';
+  position: absolute;
+  width: 105%;
+  height: 3px;
+  border-radius: 2px;
+  background-color: #424242;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.btnBlock {
+  display: flex;
+  gap: 5px;
+}
+
+
+
+.btn_delete {
+  background-color: red;
+}
