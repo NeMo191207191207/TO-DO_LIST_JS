@@ -1,74 +1,153 @@
 const title = document.querySelector('.title')
 const input = document.querySelector('.input_to-do')
 const button = document.querySelector('.create__task')
-const list = document.querySelector('.list-task')
 const types_task = document.querySelector('.types_task')
-const task_completede_list = document.createElement('ul')
+const list_task = document.querySelector('.list-task')
+const list_completede = document.querySelector('.list_completede')
 const wrapper_cube = document.querySelector('.wrapper')
 
-let quantity_task = 0
+// Начальные задачи — будут перенесены в stateTasks с уникальными id
+const initialArray = [
+  { title: "Выучить React", done: false },
+  { title: "Выучить JS", done: false },
+  { title: "Выучить CSS", done: false },
+]
 
-button.addEventListener('click', (e) => {
-  e.preventDefault()
-  const textInput = input.value;
-  if (textInput.trim() == '') { alert('Введите что-то в поле ввода') }
-  else {
-    createTask()
+// State — массив задач, каждая задача: { id, title, done }
+let nextId = Date.now()
+let stateTasks = []
+
+// Загрузка состояния из localStorage (если есть), иначе используем initialArray
+function loadState() {
+  const raw = localStorage.getItem('todo_state')
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw)
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        stateTasks = parsed.map(t => ({ id: Number(t.id), title: String(t.title), done: !!t.done }))
+        nextId = Math.max(nextId, ...stateTasks.map(t => t.id))
+        return
+      }
+    } catch (e) {
+      console.error('Ошибка парсинга сохранённого состояния:', e)
+    }
   }
-  input.focus()
-  quantity_task++
-  wrapperCubeNone()
-})
+  // fallback — начальные задачи
+  stateTasks = initialArray.map(item => ({ id: ++nextId, title: item.title, done: !!item.done }))
+}
 
-function createTask() {
-  let task = document.createElement('div')
-  let btnBlock = document.createElement('div')
-  let inputBlock = document.createElement('div')
-  let task_completede = document.createElement('ul')
-  let list_item = document.createElement('li')
-  let btn_completed = document.createElement('button')
-  let btn_delete = document.createElement('button')
+// Сохранение stateTasks в localStorage
+function saveState() {
+  try {
+    localStorage.setItem('todo_state', JSON.stringify(stateTasks))
+  } catch (e) {
+    console.error('Не удалось сохранить состояние:', e)
+  }
+}
 
-  btn_delete.textContent = 'Удалить'
-  btn_completed.textContent = 'Выполенено'
+// Рендер всего списка на основе stateTasks
+function renderTasks() {
+  list_task.innerHTML = ''
+  list_completede.innerHTML = ''
 
-  // Задаю CLass
-  task.classList.add('task')
-  inputBlock.classList.add('inputBlock_vk')
-  btnBlock.classList.add('btnBlock')
-  btn_completed.classList.add('btn_completed')
-  btn_delete.classList.add('btn_delete')
-  task_completede.classList.add('tack_completede')
-  
-  list_item.textContent = input.value
+  stateTasks.forEach(task => {
+    const li = document.createElement('li')
+    const inputBlock = document.createElement('div')
+    const btnBlock = document.createElement('div')
+    const btn_completed = document.createElement('button')
+    const btn_delete = document.createElement('button')
+    const list_item = document.createElement('span')
 
-  // Отрисовка на странице
-  list.after(task)
-  task.append(inputBlock)
-  task.append(btnBlock)
-  btnBlock.append(btn_completed) 
-  btnBlock.append(btn_delete)
-  types_task.append(task_completede)
-  inputBlock.append(list_item)
-  input.value = ''
+    btn_delete.textContent = 'Удалить'
+    btn_completed.textContent = 'Выполнено'
 
-  btn_delete.addEventListener('click', () => {
-    task.remove()
-    quantity_task--
-    wrapperCubeNone()
-  })
+    li.classList.add('task')
+    inputBlock.classList.add(task.done ? 'inputBlock' : 'inputBlock_vk')
+    btnBlock.classList.add('btnBlock')
+    btn_completed.classList.add('btn_completed')
+    btn_delete.classList.add('btn_delete')
 
-  btn_completed.addEventListener('click', () => {
-    inputBlock.classList.toggle('inputBlock')
-    btn_completed.classList.toggle('btn_completed_active')
-    task_completede.after(task)
+    if (task.done) btn_completed.classList.add('btn_completed_active')
+
+    list_item.textContent = task.title
+
+    inputBlock.appendChild(list_item)
+    btnBlock.appendChild(btn_completed)
+    btnBlock.appendChild(btn_delete)
+    li.appendChild(inputBlock)
+    li.appendChild(btnBlock)
+
+    // Вставляем в соответствующий список
+    if (task.done) {
+      list_completede.appendChild(li)
+    } else {
+      list_task.appendChild(li)
+    }
+
+    // Обработчики — работают с id задачи
+    btn_delete.addEventListener('click', () => {
+      const idx = stateTasks.findIndex(t => t.id === task.id)
+      if (idx !== -1) {
+        stateTasks.splice(idx, 1) // удаляем задачу из массива
+        saveState()
+        renderTasks()
+        wrapperCubeNone()
+      }
+    })
+
+    btn_completed.addEventListener('click', () => {
+      const t = stateTasks.find(t => t.id === task.id)
+      if (t) {
+        t.done = !t.done // переключаем флаг done
+        saveState()
+        renderTasks()
+        wrapperCubeNone()
+      }
+    })
   })
 }
+
+// Создание новой задачи — добавляем в массив и рендерим
+function createTask(text) {
+  const newTask = { id: ++nextId, title: text, done: false }
+  stateTasks.push(newTask)
+  saveState()
+  renderTasks()
+  wrapperCubeNone()
+}
+
+// Отображение / скрытие wrapper в зависимости от наличия задач
 function wrapperCubeNone() {
-  if(quantity_task > 0){
+  if (stateTasks.length > 0) {
     wrapper_cube.style.display = 'none'
-  }
-  if(quantity_task === 0) {
+  } else {
     wrapper_cube.style.display = 'block'
   }
 }
+
+// Обработчик кнопки добавления
+button.addEventListener('click', (e) => {
+  e.preventDefault()
+  const textInput = input.value
+  if (textInput.trim() === '') {
+    alert('Введите что-то в поле ввода')
+    input.focus()
+    return
+  }
+  createTask(textInput.trim())
+  input.value = ''
+  input.focus()
+})
+
+// Поддержка Enter в поле ввода
+input.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault()
+    button.click()
+  }
+})
+
+// Инициализация
+loadState()
+renderTasks()
+wrapperCubeNone()
